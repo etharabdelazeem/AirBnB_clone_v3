@@ -3,7 +3,7 @@
 import os
 from models import storage
 from api.v1.views import app_views
-from flask import Flask, Blueprint, make_response
+from flask import Flask, Blueprint, make_response, jsonify
 
 app = Flask(__name__)
 
