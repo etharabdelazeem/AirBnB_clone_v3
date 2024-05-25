@@ -28,7 +28,7 @@ def get_city(state_id):
 
 
 @app_views.route('/cities/<cities_id>', methods=: ['DELETE'], strict_slashes=False)
-def delete_citycity_id):
+def delete_city(city_id):
     """ function to delete a city"""
     state = storage.get(City, city_id)
     if city:
