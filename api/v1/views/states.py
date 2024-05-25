@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 """Create view for State objects to handle all default RESTFul API actions"""
 
-from flask import jsonify, abort
-from models.state import state
+from flask import jsonify, abort, request
+from models.state import State
 from models import storage
 from api.vi.views import app_views
 
@@ -18,7 +18,7 @@ def getAllStates():
 @app_views.route('/states/<state_id>', strict_slashes=False)
 def get_state(state_id):
     """ function to get states"""
-    state = storage.get(state, state_id)
+    state = storage.get(State, state_id)
 
     if state:
         return jsonify(state.to_dict())
@@ -29,29 +29,29 @@ def get_state(state_id):
 @app_views.route('/states/<state_id>', methods=: ['DELETE'], strict_slashes=False)
 def delete_state(state_id):
     """ function to delete states"""
-    state = storage.get(state, state_id)
+    state = storage.get(State, state_id)
     if state:
         storage.delete(state)
         storage.save()
         return jsonify({}), 200
     else:
-        abort(404)
+        return abort(404)
 
 
-@app_views.route('/states/<state_id>', methods=['POST'], strict_slashes=False)
+@app_views.route('/states', methods=['POST'], strict_slashes=False)
 def create_state(state_id):
     """ function to create state"""
     if request.content_type != 'application/json':
-        return abort(404, 'Not a JSON')
+        return abort(400, 'Not a JSON')
     if not request.get_json():
         return abort(400, 'Not a JSON')
     kwargs = request.get_json()
 
     if 'name' not in kwargs:
         abort(400, 'Missing name')
-    state = state(**kwargs)
+    state = State(**kwargs)
     state.save()
-    return jsonify(tate.todict()), 200
+    return jsonify(state.to_dict()), 200
 
 
 @app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
@@ -59,7 +59,7 @@ def update_state(state_id):
     """function to update states """
     if request.content_type != 'application/json':
         return abort(400, 'Not a JSON')
-    state = storage.get(state, state_id)
+    state = storage.get(State, state_id)
     if state:
         if not request.get_json():
             return abort(400, 'Not a JSON')
