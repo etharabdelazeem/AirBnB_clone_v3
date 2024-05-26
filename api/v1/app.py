@@ -2,11 +2,11 @@
 """connects to the api"""
 import os
 from models import storage
-from api.v1.views import app_views
 from flask import Flask, Blueprint, make_response, jsonify
 
 app = Flask(__name__)
 
+from api.v1.views import app_views
 app.register_blueprint(app_views)
 
 
@@ -16,7 +16,7 @@ def teardown_appcontext(code):
     storage.close()
 
 
-@app.errorhander(404)
+@app.errorhandler(404)
 def page_not_found(error):
     """a handler for 404 errors"""
     return make_response(jsonify({"error": "Not found"}), 404)

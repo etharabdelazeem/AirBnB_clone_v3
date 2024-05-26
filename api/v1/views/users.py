@@ -4,7 +4,7 @@
 from flask import jsonify, abort, request
 from models.user import User
 from models import storage
-from api.vi.views import app_views
+from api.v1.views import app_views
 
 
 @app_views.route ('/users', strict_slashes=False)
@@ -23,11 +23,11 @@ def get_user(user_id):
         return abort(404)
 
 
-@app_views.route('/users/<user_id>', methods=: ['DELETE'], strict_slashes=False)
+@app_views.route('/users/<user_id>', methods=['DELETE'], strict_slashes=False)
 def delete_user(user_id):
     """ function to delete a user"""
     user = storage.get(User, user_id)
- if user:
+    if user:
         storage.delete(user)
         storage.save()
         return jsonify({}), 200
@@ -36,7 +36,7 @@ def delete_user(user_id):
 
 
 @app_views.route('/users', methods=['POST'], strict_slashes=False)
-def create_user()
+def create_user():
     """ function to create user"""
     if request.content_type != 'application/json':
         return abort(400, 'Not a JSON')
@@ -54,11 +54,10 @@ def create_user()
 
 @app_views.route('/users/<user_id>', methods=['PUT'], strict_slashes=False)
 def update_user(user_id):
-
- """function to update user """
+    """function to update user """
     if request.content_type != 'application/json':
         return abort(400, 'Not a JSON')
-user= storage.get(User, user_id)
+    user= storage.get(User, user_id)
     if user:
         if not request.get_json():
             return abort(400, 'Not a JSON')
