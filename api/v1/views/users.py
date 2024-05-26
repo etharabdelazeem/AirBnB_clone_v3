@@ -7,13 +7,14 @@ from models import storage
 from api.v1.views import app_views
 
 
-@app_views.route ('/users', strict_slashes=False)
+@app_views.route('/users', strict_slashes=False)
 def getAllUsers():
     """function to get all user objects """
     users = storage.all(User)
     return jsonify([user.to_dict() for user in users])
 
-@app_views.route ('/users/<user_id>', strict_slashes=False)        
+
+@app_views.route('/users/<user_id>', strict_slashes=False)
 def get_user(user_id):
     """function to get a user"""
     user = storage.get(User, user_id)
@@ -57,7 +58,7 @@ def update_user(user_id):
     """function to update user """
     if request.content_type != 'application/json':
         return abort(400, 'Not a JSON')
-    user= storage.get(User, user_id)
+    user = storage.get(User, user_id)
     if user:
         if not request.get_json():
             return abort(400, 'Not a JSON')

@@ -8,8 +8,8 @@ from models import storage
 from api.v1.views import app_views
 
 
-@app_views.route('/cities/<string:city_id>/places',
-		methods=['GET'],strict_slashes=False)
+@app_views.route('/cities/<string:city_id>/places', methods=['GET'],
+                 strict_slashes=False)
 def get_places(city_id):
     """get place information for all places in a specified city"""
     city = storage.get("City", city_id)
@@ -42,7 +42,9 @@ def delete_place(place_id):
     storage.save()
     return (jsonify({}))
 
-@app_views.route("/cities/<string:city_id>/places", methods=['POST'], strict_slashes=False)
+
+@app_views.route("/cities/<string:city_id>/places", methods=['POST'],
+                 strict_slashes=False)
 def create_place(city_id):
     """ function to create a place"""
     if request.content_type != 'application/json':
@@ -60,8 +62,8 @@ def create_place(city_id):
     return jsonify(place.to_dict()), 201
 
 
-
-@app_views.route('/places/<string:place_id>', methods=['PUT'], strict_slashes=False)
+@app_views.route('/places/<string:place_id>', methods=['PUT'],
+                 strict_slashes=False)
 def update_place(place_id):
     """function to update place """
     if request.content_type != 'application/json':

@@ -3,10 +3,9 @@
 import os
 from models import storage
 from flask import Flask, Blueprint, make_response, jsonify
+from api.v1.views import app_views
 
 app = Flask(__name__)
-
-from api.v1.views import app_views
 app.register_blueprint(app_views)
 
 
