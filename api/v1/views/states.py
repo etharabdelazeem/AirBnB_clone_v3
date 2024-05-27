@@ -5,9 +5,11 @@ from flask import jsonify, abort, request, make_response
 from models.state import State
 from models import storage
 from api.v1.views import app_views
+from flasgger.utils import swag_from
 
 
 @app_views.route('/states', methods=['GET'], strict_slashes=False)
+@swag_from('documentation/state/get_state.yml', methods=['GET'])
 def getAllStates():
     """function that get all states """
     all_states = storage.all(State).values()
@@ -18,6 +20,7 @@ def getAllStates():
 
 
 @app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
+@swag_from('documentation/state/get_id_state.yml', methods=['get'])
 def get_state(state_id):
     """ function that get a state"""
     state = storage.get(State, state_id)
@@ -30,6 +33,7 @@ def get_state(state_id):
 
 @app_views.route('/states/<state_id>', methods=['DELETE'],
                  strict_slashes=False)
+@swag_from('documentation/state/delete_state.yml', methods=['DELETE'])
 def delete_state(state_id):
     """ function that delete a state"""
     state = storage.get(State, state_id)
@@ -42,20 +46,22 @@ def delete_state(state_id):
 
 
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
+@swag_from('documentation/state/post_state.yml', methods=['POST'])
 def create_state():
     """ function that create a state"""
     if not request.get_json():
-        return abort(400, 'Not a JSON')
+        return abort(400, description="Not a JSON")
     kwargs = request.get_json()
 
     if 'name' not in kwargs:
-        return abort(400, 'Missing name')
+        return abort(400, description="Missing name")
     state = State(**kwargs)
     state.save()
     return make_response(jsonify(state.to_dict()), 201)
 
 
 @app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
+@swag_from('documentation/state/put_state.yml', methods=['PUT'])
 def update_state(state_id):
     """function that update a state """
     state = storage.get(State, state_id)
@@ -63,7 +69,7 @@ def update_state(state_id):
         return abort(404)
 
     if not request.get_json():
-        return abort(400, 'Not a JSON')
+        return abort(400, description="Not a JSON")
     date = request.get_json()
     ignore_keys = ['id', 'created_at', 'updated_at']
 
