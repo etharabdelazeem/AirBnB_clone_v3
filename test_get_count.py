@@ -4,9 +4,9 @@
 from models import storage
 from models.state import State
 
-state = State(name='Khartoum')
-storage.new(state)
-storage.save()
+#state = State(name='')
+#storage.new(state)
+#storage.save()
 
 print("All objects: {}".format(storage.count()))
 print("State objects: {}".format(storage.count(State)))

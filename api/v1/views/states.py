@@ -7,17 +7,17 @@ from models import storage
 from api.vi.views import app_views
 
 
-@app_views.route('/states', strict_slashes=False)
+@app_views.route('/states', methods=['GET'], strict_slashes=False)
 def getAllStates():
-    """function to get all states """
-    states = storage.all(state).values()
+    """function that get all states """
+    states = storage.all(State).values()
     state_list = [state.to_dict() for state in states]
     return jsonify(state_list)
 
 
-@app_views.route('/states/<state_id>', strict_slashes=False)
+@app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
 def get_state(state_id):
-    """ function to get states"""
+    """ function that get a state"""
     state = storage.get(State, state_id)
 
     if state:
@@ -28,7 +28,7 @@ def get_state(state_id):
 
 @app_views.route('/states/<state_id>', methods=: ['DELETE'], strict_slashes=False)
 def delete_state(state_id):
-    """ function to delete states"""
+    """ function that delete a state"""
     state = storage.get(State, state_id)
     if state:
         storage.delete(state)
@@ -39,10 +39,10 @@ def delete_state(state_id):
 
 
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
-def create_state(state_id):
-    """ function to create state"""
+def create_state():
+    """ function that create a state"""
     if request.content_type != 'application/json':
-        return abort(400, 'Not a JSON')
+        return abort(404, 'Not a JSON')
     if not request.get_json():
         return abort(400, 'Not a JSON')
     kwargs = request.get_json()
@@ -56,7 +56,7 @@ def create_state(state_id):
 
 @app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
 def update_state(state_id):
-    """function to update states """
+    """function that update a state """
     if request.content_type != 'application/json':
         return abort(400, 'Not a JSON')
     state = storage.get(State, state_id)
