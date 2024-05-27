@@ -10,8 +10,8 @@ from api.v1.views import app_views
 @app_views.route('/states', methods=['GET'], strict_slashes=False)
 def getAllStates():
     """function that get all states """
-    states = storage.all(State).values()
-    state_list = [state.to_dict() for state in states]
+    all_states = storage.all(State).values()
+    state_list = [state.to_dict() for state in all_states]
     return jsonify(state_list)
 
 
@@ -42,8 +42,6 @@ def delete_state(state_id):
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
 def create_state():
     """ function that create a state"""
-    if request.content_type != 'application/json':
-        return abort(404, 'Not a JSON')
     if not request.get_json():
         return abort(400, 'Not a JSON')
     kwargs = request.get_json()
@@ -52,25 +50,23 @@ def create_state():
         abort(400, 'Missing name')
     state = State(**kwargs)
     state.save()
-    return jsonify(state.to_dict()), 200
+    return jsonify(state.to_dict()), 201
 
 
 @app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
 def update_state(state_id):
     """function that update a state """
-    if request.content_type != 'application/json':
-        return abort(400, 'Not a JSON')
     state = storage.get(State, state_id)
-    if state:
-        if not request.get_json():
-            return abort(400, 'Not a JSON')
-        date = request.get_json()
-        ignore_keys = ['id', 'created_at', 'updated_at']
+    if not state:
+         return abort(404)
 
-        for key, value in data.items():
-            if key not in ignore_keys:
-                setattr(state, key, value)
-        state.save()
-        return jsonify(state.to_dict), 200
-    else:
-        return abort(404)
+    if not request.get_json():
+        return abort(400, 'Not a JSON')
+    date = request.get_json()
+    ignore_keys = ['id', 'created_at', 'updated_at']
+
+    for key, value in data.items():
+        if key not in ignore_keys:
+            setattr(state, key, value)
+    storage.save()
+    return jsonify(state.to_dict()), 200
