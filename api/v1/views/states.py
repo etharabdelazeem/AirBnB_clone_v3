@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Create view for State objects to handle all default RESTFul API actions"""
 
-from flask import jsonify, abort, request
+from flask import jsonify, abort, request, make_response
 from models.state import State
 from models import storage
 from api.v1.views import app_views
@@ -11,8 +11,10 @@ from api.v1.views import app_views
 def getAllStates():
     """function that get all states """
     all_states = storage.all(State).values()
-    state_list = [state.to_dict() for state in all_states]
-    return jsonify(state_list)
+    list_states = []
+    for state in all_states:
+        list_states.append(state.to_dict())
+    return jsonify(list_states)
 
 
 @app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
@@ -34,7 +36,7 @@ def delete_state(state_id):
     if state:
         storage.delete(state)
         storage.save()
-        return jsonify({}), 200
+        return make_response(jsonify({}), 200)
     else:
         return abort(404)
 
@@ -47,10 +49,10 @@ def create_state():
     kwargs = request.get_json()
 
     if 'name' not in kwargs:
-        abort(400, 'Missing name')
+        return abort(400, 'Missing name')
     state = State(**kwargs)
     state.save()
-    return jsonify(state.to_dict()), 201
+    return make_response(jsonify(state.to_dict()), 201)
 
 
 @app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
@@ -58,7 +60,7 @@ def update_state(state_id):
     """function that update a state """
     state = storage.get(State, state_id)
     if not state:
-         return abort(404)
+        return abort(404)
 
     if not request.get_json():
         return abort(400, 'Not a JSON')
@@ -69,4 +71,4 @@ def update_state(state_id):
         if key not in ignore_keys:
             setattr(state, key, value)
     storage.save()
-    return jsonify(state.to_dict()), 200
+    return make_response(jsonify(state.to_dict()), 200)
